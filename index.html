@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinTrack: Algorithmic Personal Finance Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --primary: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            margin: 0;
+            color: var(--primary);
+        }
+
+        header p {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 10px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            text-align: center;
+            flex: 1;
+            padding: 10px;
+            background: var(--bg-color);
+            margin: 0 5px;
+            border-radius: 8px;
+        }
+
+        .stat-box h3 { margin: 0; font-size: 0.9rem; color: #666; }
+        .stat-box p { margin: 5px 0 0 0; font-size: 1.3rem; font-weight: bold; }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover { background: #4338ca; }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid var(--bg-color);
+        }
+
+        .income-text { color: var(--success); font-weight: bold; }
+        .expense-text { color: var(--danger); font-weight: bold; }
+
+        .projection-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .projection-table th, .projection-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--bg-color);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>FinTrack Engine</h1>
+        <p>Academic Showcase: Data-Driven Budgeting & Predictive Analytics Portfolio Project</p>
+    </header>
+
+    <div class="grid">
+        <div class="card">
+            <h2>Transaction Entry Ledger</h2>
+            <form id="transaction-form">
+                <div class="form-group">
+                    <label for="desc">Description</label>
+                    <input type="text" id="desc" placeholder="e.g., Freelance, Rent, Groceries" required>
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount ($)</label>
+                    <input type="number" id="amount" placeholder="0.00" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="type">Transaction Type</label>
+                    <select id="type">
+                        <option value="income">Income (+)</option>
+                        <option value="expense">Expense (-)</option>
+                    </select>
+                </div>
+                <button type="submit">Log Transaction</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Live Financial Metrics</h2>
+            <div class="stats">
+                <div class="stat-box">
+                    <h3>Total Income</h3>
+                    <p id="total-income" class="income-text">$0.00</p>
+                </div>
+                <div class="stat-box">
+                    <h3>Total Expenses</h3>
+                    <p id="total-expenses" class="expense-text">$0.00</p>
+                </div>
+                <div class="stat-box">
+                    <h3>Net Balance</h3>
+                    <p id="net-balance">$0.00</p>
+                </div>
+            </div>
+            <h2>Recent Activity Logs</h2>
+            <ul id="transaction-list">
+                </ul>
+        </div>
+
+        <div class="card full-width">
+            <h2>Algorithmic Predictive Analytics (Future Wealth Projection)</h2>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">
+                This module uses a mathematical baseline model running on the current savings delta to forecast prospective capital accumulation over standard fiscal periods.
+            </p>
+            <table class="projection-table">
+                <thead>
+                    <tr>
+                        <th>Time Horizon</th>
+                        <th>Projected Cumulative Savings Target</th>
+                        <th>Assumed Dynamic Confidence Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>6 Months Projection</td>
+                        <td id="proj-6" style="font-weight: bold;">$0.00</td>
+                        <td><span id="status-6">Awaiting Data</span></td>
+                    </tr>
+                    <tr>
+                        <td>12 Months Projection</td>
+                        <td id="proj-12" style="font-weight: bold;">$0.00</td>
+                        <td><span id="status-12">Awaiting Data</span></td>
+                    </tr>
+                    <tr>
+                        <td>24 Months Projection</td>
+                        <td id="proj-24" style="font-weight: bold;">$0.00</td>
+                        <td><span id="status-24">Awaiting Data</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // State management array
+    let transactions = [];
+
+    const form = document.getElementById('transaction-form');
+    const descInput = document.getElementById('desc');
+    const amountInput = document.getElementById('amount');
+    const typeInput = document.getElementById('type');
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const transaction = {
+            id: Date.now(),
+            description: descInput.value,
+            amount: parseFloat(amountInput.value),
+            type: typeInput.value
+        };
+
+        transactions.push(transaction);
+        updateDashboard();
+        form.reset();
+    });
+
+    function updateDashboard() {
+        // Compute metrics
+        let income = 0;
+        let expenses = 0;
+
+        transactions.forEach(t => {
+            if (t.type === 'income') income += t.amount;
+            else expenses += t.amount;
+        });
+
+        const net = income - expenses;
+
+        // Render metrics UI
+        document.getElementById('total-income').innerText = `$${income.toFixed(2)}`;
+        document.getElementById('total-expenses').innerText = `$${expenses.toFixed(2)}`;
+        
+        const netElement = document.getElementById('net-balance');
+        netElement.innerText = `$${net.toFixed(2)}`;
+        netElement.className = net >= 0 ? 'income-text' : 'expense-text';
+
+        // Render list logs
+        const list = document.getElementById('transaction-list');
+        list.innerHTML = '';
+        transactions.slice().reverse().forEach(t => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span>${t.description}</span>
+                <span class="${t.type === 'income' ? 'income-text' : 'expense-text'}">
+                    ${t.type === 'income' ? '+' : '-'}$${t.amount.toFixed(2)}
+                </span>
+            `;
+            list.appendChild(li);
+        });
+
+        // Compute Predictive Models
+        calculateProjections(net);
+    }
+
+    function calculateProjections(monthlyNet) {
+        const intervals = [6, 12, 24];
+        
+        intervals.forEach(months => {
+            const targetElement = document.getElementById(`proj-${months}`);
+            const statusElement = document.getElementById(`status-${months}`);
+            
+            const projectedValue = monthlyNet * months;
+            targetElement.innerText = `$${projectedValue.toFixed(2)}`;
+
+            if (projectedValue > 0) {
+                targetElement.style.color = '#10b981';
+                statusElement.innerText = "Net Positive Surplus Growth";
+                statusElement.style.color = '#10b981';
+            } else if (projectedValue < 0) {
+                targetElement.style.color = '#ef4444';
+                statusElement.innerText = "Capital Deficit Warning Flow";
+                statusElement.style.color = '#ef4444';
+            } else {
+                targetElement.style.color = '#333';
+                statusElement.innerText = "Stagnant Neutral Vector";
+                statusElement.style.color = '#666';
+            }
+        });
+    }
+</script>
+</body>
+</html>
